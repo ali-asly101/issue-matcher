@@ -24,9 +24,10 @@ Help a team lead or a team match tickets and people using real evidence, while k
 
 ## Seniority as constraints
 
-- Junior: well-scoped issues, effort cap, a named reviewer from the people strongest in that area.
-- Senior: allowed ambiguous or cross-cutting issues; may be suggested as mentor.
-- Sign-off areas (e.g. payments) require a role flag.
+Seniority and roles shape **suggestions**, never permissions to work (CLAUDE.md hard rule 10):
+- Junior: suggestions favour well-scoped issues and name a reviewer from the people strongest in that area. A junior can still claim anything.
+- Senior: suggestions include ambiguous or cross-cutting issues; may be suggested as mentor.
+- Sensitive areas (e.g. payments): claiming is allowed; the tracker comment and the lead's view flag "needs review by an area owner".
 
 ## Assignment optimisation
 

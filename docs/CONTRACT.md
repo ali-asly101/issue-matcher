@@ -44,10 +44,10 @@ Planned for contract v2 (M10): provider-neutral `WorkItem`, `ExternalPerson`, `C
 | `Skill` | `name` (e.g. `lang:rust`, `area:src/parser`, `concept:async`), `level` 0 to 1, `confidence` 0 to 1, `status` (`declared`, `practising`, `verified`), `evidence` |
 | `SkillProfile` | `person` (login or employee id), `skills: list[Skill]`, `typical_change_lines` (median), `want_to_learn: list[str]`, `hours_per_week?`, `seniority?` (team mode) |
 | `DifficultyEstimate` | `issue`, `effort` 0 to 1 (0 trivial, 1 very hard), `est_hours_low`, `est_hours_high`, `concepts: list[str]`, `likely_files: list[str]`, `unknowns: list[str]`, `confidence`, `source` (`history`, `llm`, `blended`), `evidence` |
-| `AvailabilityResult` | `available: bool`, `reasons: list[UnavailableReason]` |
+| `AvailabilityResult` | `available: bool` (recommendable), `claimable: bool` (open and unassigned), `reasons: list[UnavailableReason]` |
 | `UnavailableReason` | enum: `assigned`, `open_pr`, `stale`, `blocked`, `needs_design`, `not_actionable`, `closed` |
 | `FitBreakdown` | `skill_overlap`, `stretch`, `effort_fit`, `responsiveness` (each 0 to 1) |
-| `Match` | `issue`, `score` 0 to 1, `breakdown`, `difficulty`, `reasons: list[str]`, `first_steps: list[str]`, `evidence`, `confidence` |
+| `Match` | `issue`, `score` 0 to 1, `breakdown`, `difficulty`, `reasons: list[str]`, `first_steps: list[str]`, `evidence`, `confidence`, `fit_label`, `confidence_label`, `effort_label`, `stretch: bool` (labels are what people see; numbers stay internal) |
 | `EdgeKind` | enum: `mentions`, `duplicate`, `blocks`, `same_files`, `same_cluster` |
 | `IssueEdge` | `source: IssueRef`, `target: IssueRef`, `kind`, `weight` 0 to 1 |
 | `IssueNode` | `ref`, `title`, `cluster?`, `effort?`, `fit?` |
@@ -62,8 +62,8 @@ Read from environment with prefix `ISSUEMATCH_` (e.g. `ISSUEMATCH_TOP_N=10`); se
 | App | `APP_NAME`, `DATA_DIR`, `LOG_LEVEL` |
 | GitHub | `GITHUB_API_URL`, `GITHUB_PAGE_SIZE`, `GITHUB_MAX_ISSUES`, `GITHUB_CLOSED_HISTORY_DAYS`, `GITHUB_MIN_RATE_REMAINING` |
 | Availability | `STALE_DAYS`, `BLOCKED_LABELS`, `NEEDS_DESIGN_LABELS`, `NOT_ACTIONABLE_LABELS` |
-| Ranking | `WEIGHT_SKILL`, `WEIGHT_STRETCH`, `WEIGHT_EFFORT`, `WEIGHT_RESPONSIVENESS`, `STRETCH_TARGET`, `STRETCH_WIDTH`, `TOP_N`, `MIN_CONFIDENCE` |
-| Profile | `EVIDENCE_CONFIDENCE`, `CV_CONFIDENCE`, `DECLARED_CONFIDENCE`, `DECLARED_MAX_LEVEL`, `VERIFIED_MIN_EVIDENCE`, `DECLARED_DECAY_DAYS`, `LEVEL_SATURATION`, `COLD_START_MIN_SKILLS`, `COLD_START_MAX_EFFORT`, `CV_MAX_BYTES` |
+| Ranking | `WEIGHT_SKILL`, `WEIGHT_STRETCH`, `WEIGHT_EFFORT`, `WEIGHT_RESPONSIVENESS`, `STRETCH_TARGET`, `STRETCH_WIDTH`, `TOP_N`, `MIN_CONFIDENCE`, `FIT_LABEL_GREAT`, `FIT_LABEL_GOOD`, `FIT_LABEL_POSSIBLE`, `CONFIDENCE_LABEL_HIGH`, `CONFIDENCE_LABEL_MEDIUM`, `EFFORT_LABEL_SMALL`, `EFFORT_LABEL_MEDIUM`, `EFFORT_LABEL_LARGE`, `STRETCH_TAG_MIN` |
+| Profile | `EVIDENCE_CONFIDENCE`, `CV_CONFIDENCE`, `DECLARED_CONFIDENCE`, `DECLARED_MAX_LEVEL`, `VERIFIED_MIN_EVIDENCE`, `DECLARED_DECAY_DAYS`, `LEVEL_SATURATION`, `COLD_START_MIN_SKILLS`, `COLD_START_PREFERRED_EFFORT`, `CV_MAX_BYTES` |
 | Difficulty | `SIMILAR_K`, `HISTORY_WEIGHT`, `EFFORT_LINES_SATURATION` |
 | LLM | `LLM_MODEL`, `LLM_SHORTLIST_SIZE`, `LLM_MAX_TOKENS`, `LLM_BUDGET_USD_PER_RUN` |
 | Embeddings | `EMBEDDING_BACKEND`, `EMBEDDING_MODEL`, `DUPLICATE_SIMILARITY` |
@@ -109,4 +109,5 @@ Ingest is incremental: fetch only issues with `updated_at` newer than the stored
 | Date | Version | Change |
 | --- | --- | --- |
 | 2026-11-20 | 1 | Initial contract |
+| 2026-11-20 | 1.2 | `AvailabilityResult.claimable`; `Match` label fields; label threshold config keys; `COLD_START_MAX_EFFORT` renamed `COLD_START_PREFERRED_EFFORT` (ranks lower, never hides) |
 | 2026-11-20 | 1.1 | `Skill.status`; profile/cold-start config keys; `profile --skill/--cv` flags; connector manifest planned for v2 |

@@ -29,7 +29,7 @@ The engine modules (`profile`, `difficulty`, `availability`, `ranking`, `graph`)
 
 | Role | Can |
 | --- | --- |
-| Member | See and correct their own profile, set growth goals and hours, see their picks, **claim** a suggested ticket |
+| Member | See and correct their own profile, set growth goals and hours, see their picks, browse all open tickets, **claim** any unassigned ticket |
 | Lead | Everything a member can, plus: see suggestions for their team's tickets, **approve/assign**, run sprint suggestions, see the team map |
 | Admin | Connect trackers, manage members and roles, dry-run and kill switch, audit log, data deletion |
 
@@ -42,7 +42,8 @@ Visual language: `docs/DESIGN_SYSTEM.md` (Arial, cobalt accent, Stripe-like calm
 | Landing page | visitors | One-line promise, product screenshot of My work, three proof points (evidence-backed picks, works with your tracker, you approve every change), integrations strip, security note, sign-up |
 | Sign in | all | GitHub / GitLab / Atlassian sign-in |
 | Onboarding | new member | 1) connect a source or skip, 2) build your profile: upload CV, add skills/keywords with a level, paste profile links, 3) set hours and "want to learn", 4) first picks. Each step skippable; progress shown |
-| My work | member | Ranked picks with reasons and first steps; stretch slider; "Claim" button (assigns to me in the tracker); "Not for me" feedback. Cold-start users see "Based on your declared skills" and smaller tickets |
+| My work | member | Ranked picks with fit, confidence and effort labels, reasons and first steps; stretch slider; "Claim" button (assigns to me in the tracker); "Not for me" feedback; "All open tickets" tab listing every claimable ticket with its label. Cold-start users see "Based on your declared skills", with smaller tickets ranked first |
+| Ticket (member view) | member | Any ticket can be opened and claimed. Shows the person's fit label and reasons; if the fit is weak, a side list "These match your skills better" (never blocks the claim) |
 | My profile | member | Profile strength summary (verified vs declared), skill chips with status dots and evidence, CV upload, add skills, "want to learn", hours per week, the next step that would strengthen the profile |
 | Ticket | lead | One ticket: best 3 people with reasons, workload, growth fit; "Assign" button |
 | Team board | lead | Unassigned tickets on the left, people on the right with load; drag a suggestion to approve; bulk "approve sprint suggestions" |
@@ -77,7 +78,8 @@ Suggestions are never written to a tracker without step 2.
 
 - Every suggestion shows **why** in one or two lines, with links to the evidence.
 - One primary action per screen (Claim, Assign, Approve sprint).
-- Show confidence plainly; low-confidence suggestions sit in a "maybe" group.
+- Show fit, confidence and effort as words, never numbers; less certain suggestions sit in a "Less sure" group.
+- Never block a member from a ticket: every unassigned ticket can be claimed; weak fits get better-matching suggestions alongside.
 - Write-back is reversible from the UI (unassign + comment) and always logged.
 
 ## Acceptance tests

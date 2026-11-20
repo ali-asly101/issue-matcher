@@ -52,6 +52,17 @@ class Settings(BaseSettings):
     NO_REQUIRED_SKILLS_OVERLAP: float = 0.5  # skill_overlap when an issue lists no skills
     MIN_MATCH_CONFIDENCE: float = 0.3  # confidence floor when no skills matched (0..1)
 
+    # --- Labels people see instead of numbers (CLAUDE.md hard rule 11) ---
+    FIT_LABEL_GREAT: float = 0.75  # score at or above -> "Great fit" (0..1)
+    FIT_LABEL_GOOD: float = 0.55  # score at or above -> "Good fit" (0..1)
+    FIT_LABEL_POSSIBLE: float = 0.35  # score at or above -> "Possible fit", below -> "Weak match"
+    CONFIDENCE_LABEL_HIGH: float = 0.7  # confidence at or above -> "High confidence" (0..1)
+    CONFIDENCE_LABEL_MEDIUM: float = 0.45  # at or above -> "Medium", below -> "Low confidence"
+    EFFORT_LABEL_SMALL: float = 0.25  # effort below -> "Small" (0..1)
+    EFFORT_LABEL_MEDIUM: float = 0.5  # effort below -> "Medium" (0..1)
+    EFFORT_LABEL_LARGE: float = 0.75  # effort below -> "Large", at or above -> "Very large"
+    STRETCH_TAG_MIN: float = 0.6  # stretch component at or above (and effort > comfort) -> tag
+
     # --- Skill profile and cold start (docs/SKILL_PROFILE_SPEC.md) ---
     EVIDENCE_CONFIDENCE: float = 0.8  # starting confidence for work evidence (0..1)
     CV_CONFIDENCE: float = 0.35  # max confidence of a skill backed only by a CV (0..1)
@@ -61,7 +72,7 @@ class Settings(BaseSettings):
     DECLARED_DECAY_DAYS: int = 180  # half-life of unbacked declared confidence (days)
     LEVEL_SATURATION: float = 5.0  # evidence count at which level reaches ~63% (items)
     COLD_START_MIN_SKILLS: int = 3  # fewer evidence-backed skills than this -> cold start flow
-    COLD_START_MAX_EFFORT: float = 0.4  # effort cap for picks while in cold start (0..1)
+    COLD_START_PREFERRED_EFFORT: float = 0.4  # cold start: higher effort ranks lower, never hidden
     CV_MAX_BYTES: int = 5_000_000  # largest CV upload accepted (bytes)
 
     # --- Difficulty (docs/DIFFICULTY_SPEC.md) ---

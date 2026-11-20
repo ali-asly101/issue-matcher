@@ -13,6 +13,7 @@ from tests.conftest import make_issue
 def test_clean_open_issue_is_available(settings: Settings, now: datetime) -> None:
     result = is_available(make_issue(), settings, now)
     assert result.available
+    assert result.claimable
     assert result.reasons == []
 
 
@@ -62,3 +63,28 @@ def test_multiple_reasons_all_reported(settings: Settings, now: datetime) -> Non
         UnavailableReason.NOT_ACTIONABLE,
     }
     assert expected <= reasons
+
+
+@pytest.mark.parametrize(
+    "overrides",
+    [{"labels": ["blocked"]}, {"labels": ["needs design"]}, {"labels": ["question"]}],
+)
+def test_not_recommended_but_still_claimable(
+    settings: Settings, now: datetime, overrides: dict[str, object]
+) -> None:
+    result = is_available(make_issue(**overrides), settings, now)
+    assert not result.available
+    assert result.claimable
+
+
+def test_stale_and_open_pr_still_claimable(settings: Settings, now: datetime) -> None:
+    old = now - timedelta(days=settings.STALE_DAYS + 1)
+    pr = LinkedPR(number=5, state="open", created_at=now)
+    assert is_available(make_issue(updated_at=old, linked_prs=[pr]), settings, now).claimable
+
+
+@pytest.mark.parametrize("overrides", [{"state": "closed"}, {"assignees": ["someone"]}])
+def test_closed_or_assigned_not_claimable(
+    settings: Settings, now: datetime, overrides: dict[str, object]
+) -> None:
+    assert not is_available(make_issue(**overrides), settings, now).claimable

@@ -35,4 +35,7 @@ def is_available(issue: Issue, settings: Settings, now: datetime) -> Availabilit
     if _has_label(issue, settings.NOT_ACTIONABLE_LABELS):
         reasons.append(UnavailableReason.NOT_ACTIONABLE)
 
-    return AvailabilityResult(available=not reasons, reasons=reasons)
+    # Recommendation is strict; claiming is not. Only closed or already-assigned
+    # issues are not claimable (CLAUDE.md hard rule 10).
+    claimable = issue.state == "open" and not issue.assignees
+    return AvailabilityResult(available=not reasons, claimable=claimable, reasons=reasons)

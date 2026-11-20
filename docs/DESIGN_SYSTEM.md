@@ -62,7 +62,7 @@ One accent, a cool neutral ramp, and four status colours. All text/background pa
 | `danger` | `#B42318` | `#FEF3F2` | Broken connection, write failed, destructive action |
 | `neutral` | `#475467` | `#F2F4F7` | Pending, maybe, unknown |
 
-Fit scores use the same scale everywhere: `success` for strong fit (score >= 0.7), `accent` text for good (0.5 to 0.7), `neutral` for weak. Never use red for a low score; red only means something is broken or destructive.
+Fit is shown as a label, never a number: **Great fit** in `success`, **Good fit** in `accent`, **Possible fit** and **Weak match** in `neutral`. **Stretch** is an extra `warning`-tinted tag. Never use red or warning styling for a weak match; red only means something is broken or destructive.
 
 ### Dark mode
 
@@ -86,7 +86,7 @@ Later (S5). Tokens are named by role so a dark theme is one token file.
 | Card | `surface`, 1 px `line`, 10 px radius, 20 to 24 px padding. Title row, body, optional footer with actions on the right. |
 | Badge / pill | 12 px text, 2 px 8 px padding, soft status background with matching text colour. |
 | Skill chip | Pill with a leading dot: green dot = verified by evidence, amber dot = declared or from CV, grey = inferred. Removable (x) on the person's own profile. |
-| Fit meter | Score number (700 weight) plus a 4 px bar in the fit colour. Always paired with confidence text ("High confidence"). |
+| Fit label | Pill with the fit label ("Great fit") in its colour, followed by the confidence label in `ink-2` ("High confidence") and the effort label ("Medium, about 6 to 10 hours"). No numbers, no percentage bars. |
 | Reason line | 13 px `ink-2`, starts with an icon (code, ticket, clock, sparkle for "want to learn"), links to the evidence (PR, ticket, commit). |
 | Table | Header row `surface-2`, 12 px `ink-2` labels; rows separated by `line`; numbers right-aligned and tabular. |
 | Status row (integration) | Logo, name, connected account, last sync time, health badge, "Manage" button. |
@@ -105,11 +105,12 @@ Later (S5). Tokens are named by role so a dark theme is one token file.
 ## Trust patterns (apply on every screen)
 
 1. **Explain every suggestion** in one or two reason lines with links to the evidence; let people drill down for more.
-2. **Show confidence** honestly; low-confidence items sit in a separate "Maybe" group.
-3. **Let people correct the system**: "Not for me", "Wrong skill", edit profile, undo. Overriding is a feature, not an error.
-4. **Preview every write** to a tracker before it happens; show dry-run clearly with a `warning` banner.
-5. **Keep integrations visible after setup**: last sync, health, scopes, one-click reconnect, clear disconnect.
-6. **Never hide state changes**: activity log, timestamps, who approved what.
+2. **Show confidence** honestly, in words (High / Medium / Low confidence); less certain items sit in a separate "Less sure" group.
+3. **Never block.** Every unassigned ticket has an enabled Claim button. A weak fit gets a quiet "These match your skills better" list next to it, not a warning or a confirmation wall.
+4. **Let people correct the system**: "Not for me", "Wrong skill", edit profile, undo. Overriding is a feature, not an error.
+5. **Preview every write** to a tracker before it happens; show dry-run clearly with a `warning` banner.
+6. **Keep integrations visible after setup**: last sync, health, scopes, one-click reconnect, clear disconnect.
+7. **Never hide state changes**: activity log, timestamps, who approved what.
 
 ## Accessibility
 

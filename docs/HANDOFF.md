@@ -22,6 +22,16 @@ Rules:
 
 ---
 
+## Never block members; labels instead of numbers (2026-11-20, Architect)
+**Changed contract:** `AvailabilityResult.claimable`; `Match.fit_label`, `confidence_label`, `effort_label`, `stretch`; config `FIT_LABEL_*`, `CONFIDENCE_LABEL_*`, `EFFORT_LABEL_*`, `STRETCH_TAG_MIN`; `COLD_START_MAX_EFFORT` renamed `COLD_START_PREFERRED_EFFORT` (ranks lower, never hides). Contract v1.2.
+**Files:** `CLAUDE.md` (hard rules 10 and 11), `docs/AVAILABILITY_SPEC.md`, `docs/RANKING_SPEC.md`, `docs/DESIGN_SYSTEM.md`, `docs/WEB_APP_SPEC.md`, `docs/CLI_SPEC.md`, `docs/TEAM_MODE_SPEC.md`, `docs/SKILL_PROFILE_SPEC.md`, `docs/CONTRACT.md`, `src/issuematch/{config,models,availability,ranking}.py`, `tests/test_availability.py`, `tests/test_ranking.py`. Designs: numbers replaced with labels; new "All open tickets" screen.
+**How tested:** `./scripts/check.sh` green, 37 tests (new: claimable rules, label thresholds, labels on Match).
+**Needs from owner:** none.
+**Not tested:** label thresholds are starting values; tune them with real picks in M5.
+**Requests to others:** Ranking agent: CLI and web output must show labels only (numbers only in `--json`). Web agent: every unassigned ticket gets an enabled Claim button.
+
+---
+
 ## Design system, cold-start profiles, dynamic connectors (2026-11-20, Architect)
 **Changed contract:** `Skill.status` (`declared`/`practising`/`verified`, default `verified`); new Profile config keys (`EVIDENCE_CONFIDENCE`, `CV_CONFIDENCE`, `DECLARED_CONFIDENCE`, `DECLARED_MAX_LEVEL`, `VERIFIED_MIN_EVIDENCE`, `DECLARED_DECAY_DAYS`, `LEVEL_SATURATION`, `COLD_START_MIN_SKILLS`, `COLD_START_MAX_EFFORT`, `CV_MAX_BYTES`); `profile --skill/--cv` flags (planned for M3); connector manifests planned for contract v2.
 **Files:** `docs/DESIGN_SYSTEM.md` (new), `docs/SKILL_PROFILE_SPEC.md`, `docs/INTEGRATIONS_SPEC.md`, `docs/WEB_APP_SPEC.md`, `docs/CONTRACT.md`, `docs/todo/MILESTONES.md`, `src/issuematch/models.py`, `src/issuematch/config.py`, `README.md`.

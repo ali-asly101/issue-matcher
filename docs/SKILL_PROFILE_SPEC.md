@@ -44,7 +44,7 @@ Free-text keywords from a CV or the person ("React", "REST APIs", "reverse engin
    - **Upload CV** (PDF or DOCX, max 5 MB). The LLM extracts skills, years, and technologies into a list of suggestions. The person reviews it: keep, remove or adjust the level of each before anything is saved. Nothing from the CV is used until they confirm.
    - **Add skills and keywords**: type-ahead chips from the skill taxonomy, each with a level (Learning / Comfortable / Strong).
    - **Paste links**: GitHub/GitLab profile, portfolio, personal repos. These are fetched as normal evidence.
-3. Picks appear immediately, marked "Based on your declared skills" with lower confidence, and favour well-scoped, smaller tickets (effort cap `COLD_START_MAX_EFFORT`) so a first win is likely.
+3. Picks appear immediately, marked "Based on your declared skills" with lower confidence, and rank well-scoped, smaller tickets first (effort above `COLD_START_PREFERRED_EFFORT` is ranked lower, never hidden) so a first win is likely. The person can still see and claim every open ticket.
 
 ## How the profile grows
 
@@ -73,7 +73,7 @@ Free-text keywords from a CV or the person ("React", "REST APIs", "reverse engin
 - [ ] Fixture user with Python + Rust PRs gets `lang:python` and `lang:rust` as `verified`, each with evidence.
 - [ ] Paths touched in the target repo become `area:` skills.
 - [ ] `--learn` / "want to learn" values never appear as skills.
-- [ ] A user with no history and three declared skills gets a profile with three `declared` skills at capped confidence, and picks limited by `COLD_START_MAX_EFFORT`.
+- [ ] A user with no history and three declared skills gets a profile with three `declared` skills at capped confidence, with smaller tickets ranked first, and every claimable ticket still visible and claimable.
 - [ ] CV extraction on a fixture CV returns suggestions only; nothing is stored until confirmed; personal details are absent from the output.
 - [ ] A declared skill that gains `VERIFIED_MIN_EVIDENCE` merged PRs becomes `verified`.
 - [ ] A user with no history and no declared skills gets an empty profile with low confidence, not a crash.

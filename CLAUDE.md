@@ -66,7 +66,9 @@ If these files disagree, stop and list the conflict in `docs/HANDOFF.md`. Do not
 7. **Respect GitHub.** Use GraphQL with pagination, honour rate-limit headers, back off on 403/429, cache everything in the store, never hammer an API in a loop. Tests never hit the network; use fixtures in `tests/fixtures/`.
 8. **LLM spend is budgeted.** Embeddings and cheap filters first; the LLM only runs on the shortlist (`settings.LLM_SHORTLIST_SIZE`). Cache every LLM response by input hash.
 9. **Writes to a tracker need approval.** Only the approval flow may call connector write methods, always with an idempotency key, honouring dry-run and the kill switch (`docs/INTEGRATIONS_SPEC.md`).
-10. **Never invent features.** If a spec is silent, pick the simplest sensible default, put it in config, state it in the handoff, and add an open question to `docs/PLAN.md` if it matters.
+10. **Never block a person from work.** Anyone may claim any open, unassigned ticket, whatever their fit, seniority, skills or profile strength. Fit only orders and explains; it never hides or disables. When the fit is weak, suggest better-matching tickets alongside, never in place of the claim. Only closed tickets and tickets already assigned to someone else are not claimable (taking over someone's ticket goes through the lead or the tracker as usual).
+11. **Labels, not numbers, for people.** Scores and confidences are numbers inside the engine only. Every user-facing surface (web, CLI default output, comments written to trackers, notifications) shows plain labels: "Great fit", "Good fit", "Possible fit", "Weak match"; "High / Medium / Low confidence"; "Small / Medium / Large / Very large". Raw numbers appear only in `--json`, logs and evals.
+12. **Never invent features.** If a spec is silent, pick the simplest sensible default, put it in config, state it in the handoff, and add an open question to `docs/PLAN.md` if it matters.
 
 ## Python conventions
 

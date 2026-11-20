@@ -7,9 +7,14 @@ from __future__ import annotations
 
 import math
 from pathlib import PurePosixPath
+from typing import Literal
 
 from issuematch.config import Settings
 from issuematch.models import DifficultyEstimate, FitBreakdown, Match, SkillProfile
+
+FitLabel = Literal["Great fit", "Good fit", "Possible fit", "Weak match"]
+ConfidenceLabel = Literal["High confidence", "Medium confidence", "Low confidence"]
+EffortLabel = Literal["Small", "Medium", "Large", "Very large"]
 
 _EXT_LANG = {
     ".py": "python",
@@ -90,6 +95,34 @@ def fit_score(breakdown: FitBreakdown, settings: Settings) -> float:
     return _clamp(sum(w * p for w, p in zip(weights, parts, strict=True)) / total) if total else 0.0
 
 
+def fit_label(score: float, s: Settings) -> FitLabel:
+    if score >= s.FIT_LABEL_GREAT:
+        return "Great fit"
+    if score >= s.FIT_LABEL_GOOD:
+        return "Good fit"
+    if score >= s.FIT_LABEL_POSSIBLE:
+        return "Possible fit"
+    return "Weak match"
+
+
+def confidence_label(confidence: float, s: Settings) -> ConfidenceLabel:
+    if confidence >= s.CONFIDENCE_LABEL_HIGH:
+        return "High confidence"
+    if confidence >= s.CONFIDENCE_LABEL_MEDIUM:
+        return "Medium confidence"
+    return "Low confidence"
+
+
+def effort_label(effort: float, s: Settings) -> EffortLabel:
+    if effort < s.EFFORT_LABEL_SMALL:
+        return "Small"
+    if effort < s.EFFORT_LABEL_MEDIUM:
+        return "Medium"
+    if effort < s.EFFORT_LABEL_LARGE:
+        return "Large"
+    return "Very large"
+
+
 def score_issue(
     profile: SkillProfile,
     difficulty: DifficultyEstimate,
@@ -108,18 +141,28 @@ def score_issue(
     have = profile.skill_map()
     matched = [have[r].confidence for r in req if r in have]
     skill_conf = sum(matched) / len(matched) if matched else settings.MIN_MATCH_CONFIDENCE
+    comfort = sum(have[r].level for r in req if r in have) / len(req) if req else 0.5
+    score = fit_score(breakdown, settings)
+    confidence = min(difficulty.confidence, skill_conf)
     return Match(
         issue=difficulty.issue,
-        score=fit_score(breakdown, settings),
+        score=score,
         breakdown=breakdown,
         difficulty=difficulty,
         evidence=list(difficulty.evidence),
-        confidence=min(difficulty.confidence, skill_conf),
+        confidence=confidence,
+        fit_label=fit_label(score, settings),
+        confidence_label=confidence_label(confidence, settings),
+        effort_label=effort_label(difficulty.effort, settings),
+        stretch=breakdown.stretch >= settings.STRETCH_TAG_MIN and difficulty.effort > comfort,
     )
 
 
 def rank(matches: list[Match], settings: Settings, top_n: int | None = None) -> list[Match]:
-    """Confident picks first by score, then low-confidence 'maybe' picks; cut to top_n."""
+    """Confident picks first by score, then 'Less sure' picks; cut to top_n.
+
+    This only orders recommendations. It never decides what a person may claim.
+    """
     n = settings.TOP_N if top_n is None else top_n
     confident = [m for m in matches if m.confidence >= settings.MIN_CONFIDENCE]
     maybe = [m for m in matches if m.confidence < settings.MIN_CONFIDENCE]

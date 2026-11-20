@@ -103,7 +103,8 @@ class UnavailableReason(StrEnum):
 
 
 class AvailabilityResult(_Model):
-    available: bool
+    available: bool  # recommendable as a pick
+    claimable: bool  # anyone may claim it: open and not assigned to someone else
     reasons: list[UnavailableReason] = Field(default_factory=list)
 
 
@@ -123,6 +124,11 @@ class Match(_Model):
     first_steps: list[str] = Field(default_factory=list)
     evidence: list[Evidence] = Field(default_factory=list)
     confidence: Unit
+    # What people see. Numbers above stay internal (CLAUDE.md hard rule 11).
+    fit_label: Literal["Great fit", "Good fit", "Possible fit", "Weak match"]
+    confidence_label: Literal["High confidence", "Medium confidence", "Low confidence"]
+    effort_label: Literal["Small", "Medium", "Large", "Very large"]
+    stretch: bool = False
 
 
 class EdgeKind(StrEnum):

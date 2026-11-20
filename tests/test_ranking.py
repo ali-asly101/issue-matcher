@@ -3,7 +3,10 @@ from __future__ import annotations
 from issuematch.config import Settings
 from issuematch.models import DifficultyEstimate, FitBreakdown, IssueRef, Skill, SkillProfile
 from issuematch.ranking import (
+    confidence_label,
     effort_fit,
+    effort_label,
+    fit_label,
     fit_score,
     rank,
     required_skills,
@@ -75,3 +78,27 @@ def test_rank_sorts_and_cuts_with_maybe_last(settings: Settings) -> None:
     confident_scores = [m.score for m in ranked[:-1]]
     assert confident_scores == sorted(confident_scores, reverse=True)
     assert len(rank(matches, settings)) == settings.TOP_N
+
+
+def test_fit_labels(settings: Settings) -> None:
+    assert fit_label(settings.FIT_LABEL_GREAT, settings) == "Great fit"
+    assert fit_label(settings.FIT_LABEL_GOOD, settings) == "Good fit"
+    assert fit_label(settings.FIT_LABEL_POSSIBLE, settings) == "Possible fit"
+    assert fit_label(0.0, settings) == "Weak match"
+
+
+def test_confidence_and_effort_labels(settings: Settings) -> None:
+    assert confidence_label(0.9, settings) == "High confidence"
+    assert confidence_label(settings.CONFIDENCE_LABEL_MEDIUM, settings) == "Medium confidence"
+    assert confidence_label(0.1, settings) == "Low confidence"
+    assert effort_label(0.1, settings) == "Small"
+    assert effort_label(0.4, settings) == "Medium"
+    assert effort_label(0.6, settings) == "Large"
+    assert effort_label(0.9, settings) == "Very large"
+
+
+def test_match_carries_labels(settings: Settings) -> None:
+    m = score_issue(person(level=0.6, hours_per_week=6), est(), settings)
+    assert m.fit_label in {"Great fit", "Good fit", "Possible fit", "Weak match"}
+    assert m.confidence_label.endswith("confidence")
+    assert m.effort_label == "Medium"
