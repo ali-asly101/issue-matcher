@@ -1,0 +1,83 @@
+"""All tunables. See docs/CONTRACT.md section 4. Owner: Architect.
+
+Every value has a comment with its meaning and unit. Override any value with an
+environment variable prefixed ISSUEMATCH_ (for example ISSUEMATCH_TOP_N=10) or in .env.
+Secrets (GITHUB_TOKEN, ANTHROPIC_API_KEY) are read separately and never have defaults.
+"""
+
+from __future__ import annotations
+
+import os
+from pathlib import Path
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_prefix="ISSUEMATCH_", env_file=".env", extra="ignore", frozen=True
+    )
+
+    # --- App ---
+    APP_NAME: str = "IssueMatch"  # display name; the only place the name lives
+    DATA_DIR: Path = Path("data")  # where the SQLite cache lives (git-ignored)
+    LOG_LEVEL: str = "INFO"  # Python logging level name
+
+    # --- GitHub ---
+    GITHUB_API_URL: str = "https://api.github.com/graphql"  # GraphQL endpoint
+    GITHUB_PAGE_SIZE: int = 50  # items per GraphQL page (max 100)
+    GITHUB_MAX_ISSUES: int = 2000  # cap per state (open/closed) per ingest (issues)
+    GITHUB_CLOSED_HISTORY_DAYS: int = 730  # how far back closed issues are fetched (days)
+    GITHUB_MIN_RATE_REMAINING: int = 100  # pause or stop below this many points left
+
+    # --- Availability (docs/AVAILABILITY_SPEC.md) ---
+    STALE_DAYS: int = 180  # no maintainer activity for this long -> stale (days)
+    BLOCKED_LABELS: tuple[str, ...] = ("blocked", "on hold", "waiting for upstream")
+    NEEDS_DESIGN_LABELS: tuple[str, ...] = ("needs design", "needs discussion", "rfc")
+    NOT_ACTIONABLE_LABELS: tuple[str, ...] = ("question", "discussion", "wontfix", "invalid")
+
+    # --- Ranking (docs/RANKING_SPEC.md) ---
+    WEIGHT_SKILL: float = 0.40  # weight of skill overlap in the fit score (unitless)
+    WEIGHT_STRETCH: float = 0.25  # weight of the stretch component (unitless)
+    WEIGHT_EFFORT: float = 0.20  # weight of effort vs available time (unitless)
+    WEIGHT_RESPONSIVENESS: float = 0.15  # weight of maintainer responsiveness (unitless)
+    STRETCH_TARGET: float = 0.15  # ideal (effort - comfort) gap; >0 means a bit harder (0..1)
+    STRETCH_WIDTH: float = 0.20  # how quickly stretch score falls off around the target (0..1)
+    LEARN_BONUS: float = 0.15  # stretch bonus when a required skill is in want_to_learn (0..1)
+    TOP_N: int = 5  # picks shown by default (issues)
+    MIN_CONFIDENCE: float = 0.35  # picks below this go to the "maybe" list (0..1)
+    UNKNOWN_HOURS_EFFORT_FIT: float = 0.7  # effort_fit used when hours_per_week is unknown
+    EFFORT_FIT_ZERO_AT: float = 4.0  # effort_fit hits 0 at this multiple of weekly hours
+    DEFAULT_RESPONSIVENESS: float = 0.5  # used until review latency is measured (0..1)
+    NO_REQUIRED_SKILLS_OVERLAP: float = 0.5  # skill_overlap when an issue lists no skills
+    MIN_MATCH_CONFIDENCE: float = 0.3  # confidence floor when no skills matched (0..1)
+
+    # --- Difficulty (docs/DIFFICULTY_SPEC.md) ---
+    SIMILAR_K: int = 8  # closed neighbours used for the history estimate (issues)
+    HISTORY_WEIGHT: float = 0.7  # share of history vs LLM in the blended estimate (0..1)
+    EFFORT_LINES_SATURATION: int = 400  # changed lines that count as maximum effort (lines)
+
+    # --- LLM ---
+    LLM_MODEL: str = "claude-haiku-5-5"  # model for shortlist estimates; change freely
+    LLM_SHORTLIST_SIZE: int = 25  # only this many issues per run reach the LLM (issues)
+    LLM_MAX_TOKENS: int = 1024  # max output tokens per estimate call (tokens)
+    LLM_BUDGET_USD_PER_RUN: float = 0.50  # stop calling the LLM past this spend (USD)
+
+    # --- Embeddings ---
+    EMBEDDING_BACKEND: str = "local"  # "local" (sentence-transformers) or "api"; see PLAN Q1
+    EMBEDDING_MODEL: str = "all-MiniLM-L6-v2"  # embedding model name for the backend
+    DUPLICATE_SIMILARITY: float = 0.88  # cosine at or above this -> duplicate edge (0..1)
+
+    # --- Map (docs/ISSUE_MAP_SPEC.md) ---
+    MAP_MAX_NODES: int = 400  # nodes kept in an exported map (issues)
+    SAME_FILES_MIN_OVERLAP: int = 1  # shared files needed for a same_files edge (files)
+
+
+def github_token() -> str | None:
+    """GitHub token from the environment. Never stored in Settings or logged."""
+    return os.environ.get("GITHUB_TOKEN") or None
+
+
+def anthropic_api_key() -> str | None:
+    """Anthropic API key from the environment. Never stored in Settings or logged."""
+    return os.environ.get("ANTHROPIC_API_KEY") or None

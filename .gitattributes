@@ -1,0 +1,7 @@
+# Normalize line endings so Mac and Windows agree
+* text=auto eol=lf
+*.sh text eol=lf
+*.png binary
+*.jpg binary
+*.db binary
+uv.lock linguist-generated=true
