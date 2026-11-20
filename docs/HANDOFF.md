@@ -22,6 +22,17 @@ Rules:
 
 ---
 
+## GitHub client config keys and retry rules (2026-11-20, Architect)
+**Changed contract:** new config keys `GITHUB_HTTP_TIMEOUT_SECONDS` (30), `GITHUB_MAX_RETRIES` (5), `GITHUB_BACKOFF_BASE_SECONDS` (1.0), `GITHUB_BACKOFF_MAX_SECONDS` (60), `GITHUB_BACKOFF_JITTER_FRACTION` (0.25), `GITHUB_PR_FILES_CAP` (100). Contract v1.3.
+**Files:** `src/issuematch/config.py`, `docs/CONTRACT.md`, `docs/INGEST_SPEC.md` (retry rules: jitter, `Retry-After`, GraphQL `errors`, 401; four new acceptance tests), `docs/HANDOFF.md`.
+**How tested:** `./scripts/check.sh` (contract test checks the new keys exist).
+**Needs from owner:** none.
+**Not tested:** nothing uses these keys yet; the ingest agent builds the client next.
+**Requests to others:** Ingest agent: build the GraphQL client to these rules (M2 item 1).
+**Defaults chosen (spec was silent):** `Retry-After` is honoured in full, not cut to `GITHUB_BACKOFF_MAX_SECONDS`, because waiting less makes GitHub's secondary limit worse; it still counts as a retry. Waiting for the primary rate-limit reset is not capped either (it can be up to an hour); that is what the wait-or-exit-3 choice is for. Jitter adds 0–25% on top of the computed wait. HTTP timeout 30 s, since httpx's 5 s default is too short for big GraphQL pages.
+
+---
+
 ## M1 closed: CI green, token in place, stage S1 (2026-11-20, Architect)
 **Changed contract:** none.
 **Files:** `docs/todo/MILESTONES.md` (last two M1 items ticked), `docs/PLAN.md` (stage S1, next milestone M2), `docs/HANDOFF.md` (this entry; corrected the "Current work is still M2" line in the end-goal entry, which conflicted with PLAN.md saying M1).

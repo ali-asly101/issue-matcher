@@ -29,6 +29,12 @@ class Settings(BaseSettings):
     GITHUB_MAX_ISSUES: int = 2000  # cap per state (open/closed) per ingest (issues)
     GITHUB_CLOSED_HISTORY_DAYS: int = 730  # how far back closed issues are fetched (days)
     GITHUB_MIN_RATE_REMAINING: int = 100  # pause or stop below this many points left
+    GITHUB_HTTP_TIMEOUT_SECONDS: float = 30.0  # per-request HTTP timeout (seconds)
+    GITHUB_MAX_RETRIES: int = 5  # retries after 403/429/502/RATE_LIMITED before giving up (count)
+    GITHUB_BACKOFF_BASE_SECONDS: float = 1.0  # first retry wait; doubles each retry (seconds)
+    GITHUB_BACKOFF_MAX_SECONDS: float = 60.0  # cap on any computed back-off wait (seconds)
+    GITHUB_BACKOFF_JITTER_FRACTION: float = 0.25  # random extra wait, up to this share of it (0-1)
+    GITHUB_PR_FILES_CAP: int = 100  # max files read per pull request; cap is recorded (files)
 
     # --- Availability (docs/AVAILABILITY_SPEC.md) ---
     STALE_DAYS: int = 180  # no maintainer activity for this long -> stale (days)
