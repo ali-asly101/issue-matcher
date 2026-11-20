@@ -31,6 +31,7 @@ Legend: **[ ]** not started, **[~]** in progress, **[x]** done.
 - [ ] Availability filter covers every `UnavailableReason` (`AVAILABILITY_SPEC`), with tests per reason.
 - [ ] Skill profile from a user's public repos, commits and merged PRs (`SKILL_PROFILE_SPEC`).
 - [ ] `--learn` and `--hours` self-declared inputs merged into the profile.
+- [ ] Cold start: `--skill` declared skills and `--cv FILE` extraction (suggestions only until confirmed), `Skill.status` declared/practising/verified (`SKILL_PROFILE_SPEC`).
 - [ ] `issuematch profile LOGIN` shows skills with evidence.
 
 **Acceptance:** owner agrees their own profile is roughly right; zero assigned/PR-linked issues survive the filter on a real repo.
@@ -73,11 +74,11 @@ Legend: **[ ]** not started, **[~]** in progress, **[x]** done.
 ### S3: Web app (solo)
 
 - **M8 Backend skeleton (Web, Architect):** confirm stack; FastAPI app, Postgres schema + migrations, background worker, GitHub sign-in, Docker Compose for local dev. Engine runs as worker jobs.
-- **M9 Solo web UI (Web, Map):** My work, My profile, Issue map screens for one GitHub repo; claim = assign to me on GitHub (with dry-run). Acceptance: owner uses the site instead of the CLI.
+- **M9 Solo web UI (Web, Map):** design system tokens (`DESIGN_SYSTEM`), landing page, onboarding with CV upload and skill chips, My work, My profile, Issue map for one GitHub repo; claim = assign to me on GitHub (with dry-run). Acceptance: owner uses the site instead of the CLI; a friend with no GitHub history gets useful picks from a CV alone.
 
 ### S4: Team platform
 
-- **M10 Connector layer (Integrations, Architect):** contract v2 (`WorkItem`, `ExternalPerson`, ...); refactor GitHub ingest into a `Connector`; shared connector contract tests; webhooks.
+- **M10 Connector layer (Integrations, Architect):** contract v2 (`WorkItem`, `ExternalPerson`, ...); connector manifests + registry; Integrations directory rendered from manifests; refactor GitHub ingest into a `Connector`; shared connector contract tests; webhooks.
 - **M11 GitLab + Jira connectors (Integrations):** OAuth, backfill, sync, webhooks, status/link mapping, identity linking.
 - **M12 Team mode + approval flow (Ranking, Web):** workspaces, roles, best person per ticket, team board, approve -> write-back (assignee + comment), audit log, kill switch.
 - **M13 Notifications (Web):** tracker-native notifications plus optional email/Slack digest of picks and assignments.

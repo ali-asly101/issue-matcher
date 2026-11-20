@@ -17,6 +17,63 @@ Read work items and people from any tracker, and write approved assignments back
 
 A workspace can connect several providers at once (typical: Jira for tickets + GitHub/GitLab for code history). Identity linking maps one person across providers (see below).
 
+## Dynamic connections: registry and manifests
+
+Connectors are plug-ins. Each one ships a **manifest**, and the website builds its Integrations directory, connect flow and settings forms from the manifests, so adding a tracker never needs new UI code.
+
+```yaml
+# src/issuematch/connectors/jira/manifest.yaml
+id: jira
+name: Jira Cloud
+category: ticketing            # ticketing | code | chat
+logo: jira.svg
+auth:
+  type: oauth2                 # oauth2 | github_app | api_token | none
+  scopes: [read:jira-work, write:jira-work, read:jira-user, offline_access]
+  scope_reasons:               # shown to the user before the OAuth redirect
+    read:jira-work: "Read tickets, components and history to learn skills and find work"
+    write:jira-work: "Set the assignee and add a comment, only after you approve"
+capabilities: [read_items, read_people, read_history, assign, comment, label, webhooks]
+config:                        # rendered as a form after connecting (JSON-Schema-like)
+  - key: projects
+    label: Projects to include
+    type: multiselect
+    source: list_projects
+  - key: done_statuses
+    label: Statuses that count as done
+    type: multiselect
+    source: list_statuses
+    advanced: true
+  - key: story_points_field
+    label: Story points field
+    type: select
+    source: list_fields
+    advanced: true
+defaults: {write_label: false, dry_run: true}
+```
+
+Rules:
+- The registry discovers connectors at start-up (`connectors/*/manifest.yaml`) and validates each manifest against a schema; a bad manifest disables that connector, not the app.
+- Capabilities gate the UI: no `assign` capability means no "Assign" button for that tracker's items.
+- Fields marked `advanced` stay collapsed; every connector works with defaults only (progressive configuration).
+- A workspace can connect the same provider more than once (two Jira sites, GitLab.com plus a self-managed GitLab).
+
+### Long-tail trackers
+
+Native connectors cover GitHub, GitLab and Jira (deep features: history, webhooks, write-back). For everything else, in order of preference:
+1. **Unified ticketing API provider** (e.g. Merge, Apideck, Knit) wrapped as one connector with `category: ticketing`. Fast coverage of Linear, Asana, Azure DevOps and others; trade-offs are cost per connection, less history detail, and another processor of customer data (document it in the privacy notice). Decide at S5.
+2. **CSV / JSON import** connector (`auth.type: none`): upload an export of tickets and assignees; read-only, no write-back.
+3. **Generic webhook** connector: the tracker pushes item events to us; write-back is not available.
+
+## Integrations UX (what the user sees)
+
+- **Directory:** search, categories (Ticketing, Code, Chat), "Connected" and "Official" badges, one line per tracker on what it adds.
+- **Before the redirect:** a short panel listing each requested permission in plain words (from `scope_reasons`) and what we will never do ("We never change priorities, sprints or descriptions").
+- **After connecting:** return to the same page with a success message and the setup form (projects first; advanced fields collapsed), then a progress bar for the first backfill.
+- **Connected state:** each connection shows account/site, projects, last sync time, health badge (Healthy / Syncing / Needs attention / Disconnected), write mode (Dry run / Live), and Manage.
+- **Errors:** a plain banner with one-click Reconnect when a token expires or a scope is revoked; health checks run every sync, failures never stay silent.
+- **Disconnect:** clear and reversible; says what data is removed and that nothing in the tracker is changed.
+
 ## Connector interface
 
 ```python

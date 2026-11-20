@@ -6,6 +6,11 @@ Matches work to people. Point it at a GitHub repo and your username and it finds
 
 > Status: **S0 Setup.** Foundation, docs and pure scoring/filter/graph modules are in place. GitHub ingest is next (milestone M2). See `docs/todo/MILESTONES.md`.
 
+## Design
+
+- Visual language: `docs/DESIGN_SYSTEM.md` (Arial, cobalt accent, Stripe-like clarity).
+- Screen designs (landing, onboarding with CV upload, My work, My profile, Integrations, Assign): https://claude.ai/artifact/4wwxKghGXPnp8g7gw8FTfc
+
 ## Quick start
 
 ```bash

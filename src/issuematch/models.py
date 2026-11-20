@@ -63,6 +63,7 @@ class Skill(_Model):
     name: str  # namespaced: lang:, area:, concept:, tool:
     level: Unit
     confidence: Unit
+    status: Literal["declared", "practising", "verified"] = "verified"
     evidence: list[Evidence] = Field(default_factory=list)
 
 

@@ -35,15 +35,19 @@ The engine modules (`profile`, `difficulty`, `availability`, `ranking`, `graph`)
 
 ## Screens
 
+Visual language: `docs/DESIGN_SYSTEM.md` (Arial, cobalt accent, Stripe-like calm and clarity). Screen designs: see the Design canvas linked in the README.
+
 | Screen | For | What's on it |
 | --- | --- | --- |
+| Landing page | visitors | One-line promise, product screenshot of My work, three proof points (evidence-backed picks, works with your tracker, you approve every change), integrations strip, security note, sign-up |
 | Sign in | all | GitHub / GitLab / Atlassian sign-in |
-| My work | member | Ranked picks with reasons and first steps; stretch slider; "Claim" button (assigns to me in the tracker) |
-| My profile | member | Skills with evidence; edit, hide, add "want to learn"; hours per week |
+| Onboarding | new member | 1) connect a source or skip, 2) build your profile: upload CV, add skills/keywords with a level, paste profile links, 3) set hours and "want to learn", 4) first picks. Each step skippable; progress shown |
+| My work | member | Ranked picks with reasons and first steps; stretch slider; "Claim" button (assigns to me in the tracker); "Not for me" feedback. Cold-start users see "Based on your declared skills" and smaller tickets |
+| My profile | member | Profile strength summary (verified vs declared), skill chips with status dots and evidence, CV upload, add skills, "want to learn", hours per week, the next step that would strengthen the profile |
 | Ticket | lead | One ticket: best 3 people with reasons, workload, growth fit; "Assign" button |
 | Team board | lead | Unassigned tickets on the left, people on the right with load; drag a suggestion to approve; bulk "approve sprint suggestions" |
 | Issue map | all | Clusters, relations, fit colouring; knowledge-silo view for leads |
-| Integrations | admin | Connect providers, choose projects, identity linking, dry-run toggle, kill switch |
+| Integrations | admin | Directory built from connector manifests (search, categories, badges); permission preview before OAuth; connected list with health, last sync, write mode; identity linking; dry-run toggle; kill switch (see `INTEGRATIONS_SPEC` "Integrations UX") |
 | Activity | lead, admin | Audit log of approvals and write-backs |
 
 ## The approval -> write-back -> notify flow

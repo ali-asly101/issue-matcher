@@ -22,6 +22,16 @@ Rules:
 
 ---
 
+## Design system, cold-start profiles, dynamic connectors (2026-11-20, Architect)
+**Changed contract:** `Skill.status` (`declared`/`practising`/`verified`, default `verified`); new Profile config keys (`EVIDENCE_CONFIDENCE`, `CV_CONFIDENCE`, `DECLARED_CONFIDENCE`, `DECLARED_MAX_LEVEL`, `VERIFIED_MIN_EVIDENCE`, `DECLARED_DECAY_DAYS`, `LEVEL_SATURATION`, `COLD_START_MIN_SKILLS`, `COLD_START_MAX_EFFORT`, `CV_MAX_BYTES`); `profile --skill/--cv` flags (planned for M3); connector manifests planned for contract v2.
+**Files:** `docs/DESIGN_SYSTEM.md` (new), `docs/SKILL_PROFILE_SPEC.md`, `docs/INTEGRATIONS_SPEC.md`, `docs/WEB_APP_SPEC.md`, `docs/CONTRACT.md`, `docs/todo/MILESTONES.md`, `src/issuematch/models.py`, `src/issuematch/config.py`, `README.md`.
+**How tested:** `./scripts/check.sh` green (contract test confirms every new config key exists).
+**Needs from owner:** review the screen designs and the palette; say if you want a different accent colour.
+**Not tested:** CV extraction and connector manifests are designs only; nothing is implemented yet.
+**Requests to others:** Profile agent: cold start is part of M3. Web agent: use `DESIGN_SYSTEM.md` tokens from M9.
+
+---
+
 ## End goal set: web platform with tracker connectors and write-back (2026-11-20, Architect)
 **Changed contract:** no code changes. Contract now lists planned v2 models (`WorkItem`, `ExternalPerson`, `Connector`, `Approval`, ...) and new packages `connectors/`, `api/`, `worker/`, `web/` for M10 onward.
 **Files:** `CLAUDE.md`, `README.md`, `docs/PLAN.md`, `docs/CONTRACT.md`, `docs/INTEGRATIONS_SPEC.md` (new), `docs/WEB_APP_SPEC.md` (new), `docs/TEAM_MODE_SPEC.md`, `docs/PRIVACY_SPEC.md`, `docs/todo/MILESTONES.md`, `docs/todo/BACKLOG.md`, `.claude/agents/integrations.md` (new), `.claude/agents/web.md` (new).

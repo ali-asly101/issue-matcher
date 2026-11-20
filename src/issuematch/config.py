@@ -52,6 +52,18 @@ class Settings(BaseSettings):
     NO_REQUIRED_SKILLS_OVERLAP: float = 0.5  # skill_overlap when an issue lists no skills
     MIN_MATCH_CONFIDENCE: float = 0.3  # confidence floor when no skills matched (0..1)
 
+    # --- Skill profile and cold start (docs/SKILL_PROFILE_SPEC.md) ---
+    EVIDENCE_CONFIDENCE: float = 0.8  # starting confidence for work evidence (0..1)
+    CV_CONFIDENCE: float = 0.35  # max confidence of a skill backed only by a CV (0..1)
+    DECLARED_CONFIDENCE: float = 0.3  # max confidence of a self-declared-only skill (0..1)
+    DECLARED_MAX_LEVEL: float = 0.75  # level cap for declared skills until verified (0..1)
+    VERIFIED_MIN_EVIDENCE: int = 3  # independent work items needed to mark a skill verified
+    DECLARED_DECAY_DAYS: int = 180  # half-life of unbacked declared confidence (days)
+    LEVEL_SATURATION: float = 5.0  # evidence count at which level reaches ~63% (items)
+    COLD_START_MIN_SKILLS: int = 3  # fewer evidence-backed skills than this -> cold start flow
+    COLD_START_MAX_EFFORT: float = 0.4  # effort cap for picks while in cold start (0..1)
+    CV_MAX_BYTES: int = 5_000_000  # largest CV upload accepted (bytes)
+
     # --- Difficulty (docs/DIFFICULTY_SPEC.md) ---
     SIMILAR_K: int = 8  # closed neighbours used for the history estimate (issues)
     HISTORY_WEIGHT: float = 0.7  # share of history vs LLM in the blended estimate (0..1)

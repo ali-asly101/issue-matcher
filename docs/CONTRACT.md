@@ -41,7 +41,7 @@ Planned for contract v2 (M10): provider-neutral `WorkItem`, `ExternalPerson`, `C
 | `IssueRef` | `repo` (`owner/name`), `number` |
 | `Issue` | `ref`, `title`, `body`, `state` (`open`/`closed`), `labels`, `author`, `assignees`, `created_at`, `updated_at`, `closed_at?`, `comments_count`, `last_maintainer_activity_at?`, `linked_prs: list[LinkedPR]`, `mentions: list[IssueRef]` |
 | `LinkedPR` | `number`, `state` (`open`/`merged`/`closed`), `files_changed: list[str]`, `additions`, `deletions`, `merged_at?`, `created_at` |
-| `Skill` | `name` (e.g. `lang:rust`, `area:src/parser`, `concept:async`), `level` 0 to 1, `confidence` 0 to 1, `evidence` |
+| `Skill` | `name` (e.g. `lang:rust`, `area:src/parser`, `concept:async`), `level` 0 to 1, `confidence` 0 to 1, `status` (`declared`, `practising`, `verified`), `evidence` |
 | `SkillProfile` | `person` (login or employee id), `skills: list[Skill]`, `typical_change_lines` (median), `want_to_learn: list[str]`, `hours_per_week?`, `seniority?` (team mode) |
 | `DifficultyEstimate` | `issue`, `effort` 0 to 1 (0 trivial, 1 very hard), `est_hours_low`, `est_hours_high`, `concepts: list[str]`, `likely_files: list[str]`, `unknowns: list[str]`, `confidence`, `source` (`history`, `llm`, `blended`), `evidence` |
 | `AvailabilityResult` | `available: bool`, `reasons: list[UnavailableReason]` |
@@ -63,6 +63,7 @@ Read from environment with prefix `ISSUEMATCH_` (e.g. `ISSUEMATCH_TOP_N=10`); se
 | GitHub | `GITHUB_API_URL`, `GITHUB_PAGE_SIZE`, `GITHUB_MAX_ISSUES`, `GITHUB_CLOSED_HISTORY_DAYS`, `GITHUB_MIN_RATE_REMAINING` |
 | Availability | `STALE_DAYS`, `BLOCKED_LABELS`, `NEEDS_DESIGN_LABELS`, `NOT_ACTIONABLE_LABELS` |
 | Ranking | `WEIGHT_SKILL`, `WEIGHT_STRETCH`, `WEIGHT_EFFORT`, `WEIGHT_RESPONSIVENESS`, `STRETCH_TARGET`, `STRETCH_WIDTH`, `TOP_N`, `MIN_CONFIDENCE` |
+| Profile | `EVIDENCE_CONFIDENCE`, `CV_CONFIDENCE`, `DECLARED_CONFIDENCE`, `DECLARED_MAX_LEVEL`, `VERIFIED_MIN_EVIDENCE`, `DECLARED_DECAY_DAYS`, `LEVEL_SATURATION`, `COLD_START_MIN_SKILLS`, `COLD_START_MAX_EFFORT`, `CV_MAX_BYTES` |
 | Difficulty | `SIMILAR_K`, `HISTORY_WEIGHT`, `EFFORT_LINES_SATURATION` |
 | LLM | `LLM_MODEL`, `LLM_SHORTLIST_SIZE`, `LLM_MAX_TOKENS`, `LLM_BUDGET_USD_PER_RUN` |
 | Embeddings | `EMBEDDING_BACKEND`, `EMBEDDING_MODEL`, `DUPLICATE_SIMILARITY` |
@@ -76,7 +77,7 @@ Secrets (env only, never in config defaults): `GITHUB_TOKEN`, `ANTHROPIC_API_KEY
 | --- | --- | --- |
 | `issuematch version` | prints name and version | text |
 | `issuematch ingest OWNER/REPO` | fetches and caches issues + PRs | summary counts |
-| `issuematch profile LOGIN [--learn X]... [--hours N]` | builds and caches a SkillProfile | table, or `--json` |
+| `issuematch profile LOGIN [--learn X]... [--hours N] [--skill X]... [--cv FILE]` | builds and caches a SkillProfile; `--skill` and `--cv` add declared skills (cold start) | table, or `--json` |
 | `issuematch match OWNER/REPO --user LOGIN [--top N] [--stretch 0..1]` | full pipeline | ranked table, or `--json` (list of `Match`) |
 | `issuematch map OWNER/REPO [--user LOGIN] [--format json\|mermaid\|html]` | builds the issue graph | file in `build/` |
 | `issuematch eval OWNER/REPO` | runs the evaluation in `EVALUATION_SPEC` | report in `docs/evals/` |
@@ -108,3 +109,4 @@ Ingest is incremental: fetch only issues with `updated_at` newer than the stored
 | Date | Version | Change |
 | --- | --- | --- |
 | 2026-11-20 | 1 | Initial contract |
+| 2026-11-20 | 1.1 | `Skill.status`; profile/cold-start config keys; `profile --skill/--cv` flags; connector manifest planned for v2 |
