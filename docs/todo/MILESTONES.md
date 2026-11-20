@@ -10,8 +10,8 @@ Legend: **[ ]** not started, **[~]** in progress, **[x]** done.
 - [x] Toolchain: uv, ruff, mypy (strict), pytest. `./scripts/check.sh` green locally.
 - [x] `config.py` and `models.py` match the contract.
 - [x] Pure modules stubbed with tests: availability, ranking, graph.
-- [ ] Repo pushed to GitHub, CI green on the first push.
-- [ ] `.env` created from `.env.example` with a read-only `GITHUB_TOKEN`.
+- [x] Repo pushed to GitHub, CI green on the first push.
+- [x] `.env` created from `.env.example` with a read-only `GITHUB_TOKEN`.
 
 **Acceptance:** fresh clone -> `./scripts/setup.sh` -> `./scripts/check.sh` passes on the owner's machine and in CI.
 

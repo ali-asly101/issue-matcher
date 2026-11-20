@@ -22,6 +22,16 @@ Rules:
 
 ---
 
+## M1 closed: CI green, token in place, stage S1 (2026-11-20, Architect)
+**Changed contract:** none.
+**Files:** `docs/todo/MILESTONES.md` (last two M1 items ticked), `docs/PLAN.md` (stage S1, next milestone M2), `docs/HANDOFF.md` (this entry; corrected the "Current work is still M2" line in the end-goal entry, which conflicted with PLAN.md saying M1).
+**How tested:** owner reports: `main` pushed, CI green on `780fdd6`, `./scripts/setup.sh` and `./scripts/check.sh` pass on their Mac, `.env` holds a read-only `GITHUB_TOKEN`. Architect did not re-run these and did not read `.env`.
+**Needs from owner:** none.
+**Not tested:** token scope and validity not checked by the Architect (first real check is the M2 ingest run).
+**Requests to others:** Ingest agent: M2 is current; start with the GraphQL client (`INGEST_SPEC`).
+
+---
+
 ## Never block members; labels instead of numbers (2026-11-20, Architect)
 **Changed contract:** `AvailabilityResult.claimable`; `Match.fit_label`, `confidence_label`, `effort_label`, `stretch`; config `FIT_LABEL_*`, `CONFIDENCE_LABEL_*`, `EFFORT_LABEL_*`, `STRETCH_TAG_MIN`; `COLD_START_MAX_EFFORT` renamed `COLD_START_PREFERRED_EFFORT` (ranks lower, never hides). Contract v1.2.
 **Files:** `CLAUDE.md` (hard rules 10 and 11), `docs/AVAILABILITY_SPEC.md`, `docs/RANKING_SPEC.md`, `docs/DESIGN_SYSTEM.md`, `docs/WEB_APP_SPEC.md`, `docs/CLI_SPEC.md`, `docs/TEAM_MODE_SPEC.md`, `docs/SKILL_PROFILE_SPEC.md`, `docs/CONTRACT.md`, `src/issuematch/{config,models,availability,ranking}.py`, `tests/test_availability.py`, `tests/test_ranking.py`. Designs: numbers replaced with labels; new "All open tickets" screen.
@@ -48,7 +58,7 @@ Rules:
 **How tested:** `./scripts/check.sh` still green (docs-only change; contract test still passes).
 **Needs from owner:** confirm the web stack default (FastAPI + Postgres + React) before M8; answer PLAN open questions 6 to 9 if you want different defaults.
 **Not tested:** nothing new is implemented; the S3/S4 specs are designs, not verified against the GitHub, GitLab or Jira APIs yet.
-**Requests to others:** none. Current work is still M2 (ingest).
+**Requests to others:** none. (Wording corrected 2026-11-20: at the time M1 was still open; M2 is next only after M1 closed. See the M1 entry above.)
 
 ---
 

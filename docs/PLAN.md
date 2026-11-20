@@ -1,6 +1,6 @@
 # PLAN: IssueMatch
 
-Last updated: 2026-11-20. Current development stage: **S0 (Setup)**. Next milestone: **M1**.
+Last updated: 2026-11-20. Current development stage: **S1 (Solo MVP)**. Next milestone: **M2**.
 
 ## Vision
 
