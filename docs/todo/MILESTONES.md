@@ -68,6 +68,22 @@ Legend: **[ ]** not started, **[~]** in progress, **[x]** done.
 
 **Acceptance:** map for a 1,000-issue repo renders and the owner can name what each big cluster is.
 
+## Later stages (outline; detail each milestone when its stage starts)
+
+### S3: Web app (solo)
+
+- **M8 Backend skeleton (Web, Architect):** confirm stack; FastAPI app, Postgres schema + migrations, background worker, GitHub sign-in, Docker Compose for local dev. Engine runs as worker jobs.
+- **M9 Solo web UI (Web, Map):** My work, My profile, Issue map screens for one GitHub repo; claim = assign to me on GitHub (with dry-run). Acceptance: owner uses the site instead of the CLI.
+
+### S4: Team platform
+
+- **M10 Connector layer (Integrations, Architect):** contract v2 (`WorkItem`, `ExternalPerson`, ...); refactor GitHub ingest into a `Connector`; shared connector contract tests; webhooks.
+- **M11 GitLab + Jira connectors (Integrations):** OAuth, backfill, sync, webhooks, status/link mapping, identity linking.
+- **M12 Team mode + approval flow (Ranking, Web):** workspaces, roles, best person per ticket, team board, approve -> write-back (assignee + comment), audit log, kill switch.
+- **M13 Notifications (Web):** tracker-native notifications plus optional email/Slack digest of picks and assignments.
+
+**S4 acceptance:** a test team plans a sprint through the site; Jira (or GitLab) shows the assignments and comments; every write is in the audit log.
+
 ## Standing tasks (every milestone)
 
 - [ ] Run the definition-of-done checks from `CLAUDE.md`.

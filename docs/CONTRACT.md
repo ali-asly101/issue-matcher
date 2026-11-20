@@ -26,7 +26,12 @@ src/issuematch/
   ranking.py         fit_score(...) and rank(...) - Ranking
   graph.py           build_issue_graph(...), to_mermaid(...), to_json(...) - Map
   mapview/           interactive HTML export (S2) - Map
+  connectors/        Connector protocol + github/gitlab/jira (S4, contract v2) - Integrations
+  api/, worker/      FastAPI app and background jobs (S3+) - Web
+web/                 React frontend (S3+) - Web
 ```
+
+Planned for contract v2 (M10): provider-neutral `WorkItem`, `ExternalPerson`, `Contribution`, `Project`, `WriteResult`, `ChangeEvent`, `Approval`, and the `Connector` protocol in `docs/INTEGRATIONS_SPEC.md`. Until then the engine uses `Issue`.
 
 ## 3. Data models (`models.py`)
 

@@ -22,6 +22,16 @@ Rules:
 
 ---
 
+## End goal set: web platform with tracker connectors and write-back (2026-11-20, Architect)
+**Changed contract:** no code changes. Contract now lists planned v2 models (`WorkItem`, `ExternalPerson`, `Connector`, `Approval`, ...) and new packages `connectors/`, `api/`, `worker/`, `web/` for M10 onward.
+**Files:** `CLAUDE.md`, `README.md`, `docs/PLAN.md`, `docs/CONTRACT.md`, `docs/INTEGRATIONS_SPEC.md` (new), `docs/WEB_APP_SPEC.md` (new), `docs/TEAM_MODE_SPEC.md`, `docs/PRIVACY_SPEC.md`, `docs/todo/MILESTONES.md`, `docs/todo/BACKLOG.md`, `.claude/agents/integrations.md` (new), `.claude/agents/web.md` (new).
+**How tested:** `./scripts/check.sh` still green (docs-only change; contract test still passes).
+**Needs from owner:** confirm the web stack default (FastAPI + Postgres + React) before M8; answer PLAN open questions 6 to 9 if you want different defaults.
+**Not tested:** nothing new is implemented; the S3/S4 specs are designs, not verified against the GitHub, GitLab or Jira APIs yet.
+**Requests to others:** none. Current work is still M2 (ingest).
+
+---
+
 ## Project scaffold, toolchain and foundation (2026-11-20, Architect)
 **Changed contract:** none (initial contract v1 written).
 **Files:** `CLAUDE.md`, `README.md`, `pyproject.toml`, `uv.lock`, `.env.example`, `.gitignore`, `.gitattributes`, `.pre-commit-config.yaml`, `docs/**`, `src/issuematch/{__init__,config,models,availability,ranking,graph,cli}.py`, `src/issuematch/prompts/difficulty_estimate.md`, `tests/**`, `scripts/{setup,check}.sh`, `.github/workflows/ci.yml`, `.claude/agents/*`, `.claude/commands/*`, `.claude/settings.json`.

@@ -8,8 +8,10 @@ A tool that reads a GitHub repository, finds open issues, and recommends the one
 
 The pipeline is: **Ingest repo -> Profile the person -> Estimate issue difficulty -> Filter unavailable issues -> Rank by fit -> Explain + map.**
 
-- **Solo mode** (first): one contributor, one open-source repo.
-- **Team mode** (later): a team, their Git/Jira history, roles and CVs; suggests "best ticket for this person" and "best person for this ticket". See `docs/TEAM_MODE_SPEC.md`. Not in scope until `docs/PLAN.md` says so.
+- **End goal:** a web platform that connects to Jira, GitLab and GitHub, matches tickets to people, and after a human approves, writes the assignment back to the tracker and notifies the person. See `docs/WEB_APP_SPEC.md` and `docs/INTEGRATIONS_SPEC.md`.
+- **Solo mode** (first): one contributor, one open-source repo, as a CLI. This proves the matching engine.
+- **Team mode** (S4): a team, their tracker and code history, roles; "best ticket for this person" and "best person for this ticket". See `docs/TEAM_MODE_SPEC.md`.
+- Only build the stage `docs/PLAN.md` says is current. Later-stage specs exist so early code does not block them.
 
 ## Read first, in this order
 
@@ -48,6 +50,8 @@ If these files disagree, stop and list the conflict in `docs/HANDOFF.md`. Do not
 | `src/issuematch/graph.py`, `src/issuematch/mapview/` | Issue map building and export | Map agent |
 | `src/issuematch/llm/`, `src/issuematch/prompts/` | LLM client wrapper and prompt templates | Estimator agent |
 | `src/issuematch/cli.py` | Command-line interface | Architect (wiring only) |
+| `src/issuematch/connectors/` | Tracker connectors (GitHub, GitLab, Jira) and write-back (S4) | Integrations agent |
+| `src/issuematch/api/`, `src/issuematch/worker/`, `web/` | Web backend, background jobs, frontend (S3+) | Web agent |
 | `tests/`, `docs/evals/` | Tests, fixtures, evaluation runs | QA agent |
 | `docs/` | Plans and specs | Architect, plus the spec's author |
 
@@ -61,7 +65,8 @@ If these files disagree, stop and list the conflict in `docs/HANDOFF.md`. Do not
 6. **Pure core, thin edges.** Scoring, filtering, graph building and calibration are pure functions on models with no network or disk, so they are unit-tested without mocks. Network (GitHub, LLM) and storage live at the edges.
 7. **Respect GitHub.** Use GraphQL with pagination, honour rate-limit headers, back off on 403/429, cache everything in the store, never hammer an API in a loop. Tests never hit the network; use fixtures in `tests/fixtures/`.
 8. **LLM spend is budgeted.** Embeddings and cheap filters first; the LLM only runs on the shortlist (`settings.LLM_SHORTLIST_SIZE`). Cache every LLM response by input hash.
-9. **Never invent features.** If a spec is silent, pick the simplest sensible default, put it in config, state it in the handoff, and add an open question to `docs/PLAN.md` if it matters.
+9. **Writes to a tracker need approval.** Only the approval flow may call connector write methods, always with an idempotency key, honouring dry-run and the kill switch (`docs/INTEGRATIONS_SPEC.md`).
+10. **Never invent features.** If a spec is silent, pick the simplest sensible default, put it in config, state it in the handoff, and add an open question to `docs/PLAN.md` if it matters.
 
 ## Python conventions
 
@@ -103,6 +108,8 @@ Split by folder and spec, never by "feature slices" that touch the same files.
 | Estimator | `difficulty/`, `llm/`, `prompts/` | DIFFICULTY |
 | Ranking | `availability.py`, `ranking.py` | AVAILABILITY, RANKING |
 | Map | `graph.py`, `mapview/` | ISSUE_MAP |
+| Integrations (S4) | `connectors/` | INTEGRATIONS |
+| Web (S3+) | `api/`, `worker/`, `web/` | WEB_APP |
 | QA | `tests/`, `docs/evals/` | EVALUATION, all acceptance tests |
 
 Agent definitions live in `.claude/agents/`. Two agents never edit the same file; if they must, the Architect decides the order.

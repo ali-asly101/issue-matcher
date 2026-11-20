@@ -13,10 +13,12 @@ Ideas that are **not** scheduled. Move an item into `MILESTONES.md` only when `d
 - Manager view of the issue map: clusters only one person can touch.
 - Profile review screen: the person sees and corrects their own profile.
 
-## S4: Web
+## S5: Hosted SaaS
 
-- Hosted web UI with GitHub OAuth.
-- Saved profiles and watched repos; weekly "new issues for you" digest.
+- Managed multi-tenant hosting, org admin console, billing.
+- SSO (SAML/OIDC) for companies; security review; data residency options (EU).
+- More connectors: Linear, Azure DevOps, Jira Data Center, Shortcut.
+- Slack / Teams app: "what should I pick up next?" in chat.
 - Shareable map links.
 
 ## Quality ideas

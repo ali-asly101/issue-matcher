@@ -1,6 +1,8 @@
 # IssueMatch
 
-Point it at a GitHub repo and your username. It finds the open issues you can realistically finish and would learn from, explains **why** with evidence, and draws a **map** of how the repo's issues relate.
+Matches work to people. Point it at a GitHub repo and your username and it finds the open issues you can realistically finish and would learn from, explains **why** with evidence, and draws a **map** of how the issues relate.
+
+**Where it's going:** a web platform that connects to Jira, GitLab and GitHub, suggests the best person for each ticket (and the best ticket for each person), and when a lead approves, writes the assignment back to the tracker and notifies the person. Roadmap in `docs/PLAN.md`; designs in `docs/WEB_APP_SPEC.md` and `docs/INTEGRATIONS_SPEC.md`.
 
 > Status: **S0 Setup.** Foundation, docs and pure scoring/filter/graph modules are in place. GitHub ingest is next (milestone M2). See `docs/todo/MILESTONES.md`.
 
@@ -33,7 +35,7 @@ This repo is set up for a multi-agent workflow:
 
 - `CLAUDE.md` holds the rules every agent follows (ownership, hard rules, definition of done).
 - `docs/` holds the plan, the contract (shared models/config/CLI), one spec per system, milestones and the handoff log.
-- `.claude/agents/` defines one agent per area: ingest, profile, estimator, ranking, map, qa.
+- `.claude/agents/` defines one agent per area: ingest, profile, estimator, ranking, map, qa, plus integrations and web for the later platform stages.
 - `.claude/commands/` adds `/next` (pick up the next milestone task), `/check` (run the checks) and `/handoff` (write the handoff entry).
 
 A typical loop: open the repo in Claude Code, run `/next`, approve the plan, let the owning agent build it, then `/check` and `/handoff`. Ask for several agents in parallel only on tasks that touch different folders.

@@ -1,6 +1,6 @@
 # TEAM MODE SPEC
 
-**Not for S1 or S2.** Written now so solo-mode models do not block it. Owner: Architect.
+**Stage S4.** Written now so solo-mode models do not block it. Owner: Architect. Delivery is through the web app (`WEB_APP_SPEC.md`) and the connectors (`INTEGRATIONS_SPEC.md`), including write-back of approved assignments to Jira, GitLab or GitHub.
 
 ## Goal
 
