@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     GITHUB_BACKOFF_BASE_SECONDS: float = 1.0  # first retry wait; doubles each retry (seconds)
     GITHUB_BACKOFF_MAX_SECONDS: float = 60.0  # cap on any computed back-off wait (seconds)
     GITHUB_BACKOFF_JITTER_FRACTION: float = 0.25  # random extra wait, up to this share of it (0-1)
+    GITHUB_MAX_INLINE_WAIT_SECONDS: float = 300.0  # longer waits: wait or exit 3 (seconds)
     GITHUB_PR_FILES_CAP: int = 100  # max files read per pull request; cap is recorded (files)
 
     # --- Availability (docs/AVAILABILITY_SPEC.md) ---

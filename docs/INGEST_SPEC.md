@@ -24,6 +24,7 @@ Get everything the rest of the pipeline needs about a repo, cheaply and incremen
 - Back off exponentially on 403/429/502: wait `GITHUB_BACKOFF_BASE_SECONDS` doubled per retry, plus random jitter up to `GITHUB_BACKOFF_JITTER_FRACTION` of it, capped at `GITHUB_BACKOFF_MAX_SECONDS`; give up after `GITHUB_MAX_RETRIES`.
 - If a response carries `Retry-After` (GitHub's secondary rate limit sends it with 403), wait exactly that long instead of the computed back-off. It is the server's instruction, so the back-off cap does not shorten it.
 - GraphQL can answer HTTP 200 with an `errors` array. `type: RATE_LIMITED` is a rate-limit case (wait or exit 3, same as low `remaining`). Any other GraphQL error is raised as a clear error and never retried.
+- Inline-wait limit: any single wait longer than `GITHUB_MAX_INLINE_WAIT_SECONDS` (a `Retry-After` or a rate-limit reset, from low `remaining` or `RATE_LIMITED`) follows the CLI flag: sleep, or exit with code 3 (`RateLimitExhaustedError`, carrying the reset time and wait). Waits at or below the limit always sleep, whatever the flag. Computed back-off is capped at `GITHUB_BACKOFF_MAX_SECONDS`, below this limit. Every sleep logs one INFO line with its length in seconds and the reason (never the token).
 - 401 is never retried: fail at once with a message to check `GITHUB_TOKEN` in `.env`.
 - Incremental: query with `filterBy: { since: <stored max updated_at> }`.
 - Pull request file lists can be large; cap at `GITHUB_PR_FILES_CAP` files per PR and record the cap.
@@ -38,10 +39,11 @@ Get everything the rest of the pipeline needs about a repo, cheaply and incremen
 ## Acceptance tests
 
 - [ ] Mapping from fixture JSON to `Issue` models is lossless for every contract field.
-- [ ] Pagination test: 3 fake pages produce all issues exactly once.
-- [ ] Rate-limit test: low `remaining` triggers wait or exit 3.
-- [ ] Back-off test: 403/429/502 retried with growing, jittered, capped waits; gives up after `GITHUB_MAX_RETRIES`.
-- [ ] `Retry-After` test: the header's value is used instead of the computed wait.
-- [ ] GraphQL errors test: `RATE_LIMITED` follows the rate-limit path; other errors raise without retry.
-- [ ] 401 test: no retry, message points to `GITHUB_TOKEN` in `.env`.
+- [x] Pagination test: 3 fake pages produce all issues exactly once.
+- [x] Rate-limit test: low `remaining` triggers wait or exit 3.
+- [x] Back-off test: 403/429/502 retried with growing, jittered, capped waits; gives up after `GITHUB_MAX_RETRIES`.
+- [x] `Retry-After` test: the header's value is used instead of the computed wait.
+- [x] GraphQL errors test: `RATE_LIMITED` follows the rate-limit path; other errors raise without retry.
+- [x] 401 test: no retry, message points to `GITHUB_TOKEN` in `.env`.
+- [x] Inline wait test: a wait over `GITHUB_MAX_INLINE_WAIT_SECONDS` sleeps or exits 3 per the flag; shorter waits always sleep; each sleep logs one INFO line.
 - [ ] Incremental test: second ingest only requests issues updated since the first.

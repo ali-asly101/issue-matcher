@@ -22,6 +22,26 @@ Rules:
 
 ---
 
+## M2: GraphQL client with pagination, rate limits and back-off (2026-11-20, Ingest)
+**Changed contract:** `GITHUB_MAX_INLINE_WAIT_SECONDS` (added by Architect: `src/issuematch/config.py`, `docs/CONTRACT.md` v1.3 row). No other contract change. New package `issuematch.github` (public: `GitHubClient`, `JSONObject`, errors `GitHubError`, `MissingTokenError`, `BadTokenError`, `RateLimitExhaustedError` (`reset_at`, `remaining`, `wait_seconds`), `RetriesExhaustedError` (`retries`, `last_status`), `GraphQLError` (`messages`, `types`), `UnexpectedResponseError` (`status`)).
+**Files:** `src/issuematch/github/__init__.py`, `src/issuematch/github/client.py`, `src/issuematch/github/errors.py` (new); `tests/test_github_client.py` (new, 33 test cases from 27 functions); `docs/INGEST_SPEC.md` (inline-wait rule, "Inline wait test" box, ticked 7 boxes); `docs/todo/MILESTONES.md` (M2 item 1 ticked); `docs/HANDOFF.md`. Committed alongside, edited by Architect: `src/issuematch/config.py`, `docs/CONTRACT.md`.
+**How tested:** `uv run ruff check src tests` minus config.py clean, `uv run mypy` clean (11 files, strict), `uv run pytest`: 70 passed (all offline; MockTransport, fake sleep/clock/random). `./scripts/check.sh` was not green at hand-back: `config.py` line 37 (Architect's new key) was too long for ruff. **Architect fix and review:** shortened that comment, reviewed `client.py` against INGEST_SPEC, reran `./scripts/check.sh`: ruff check clean, ruff format check clean, mypy strict clean (11 files), pytest 70 passed.
+**Needs from owner:** none.
+**Not tested:** no real GitHub call was made (no token used, `.env` not read); real response headers/shapes are assumed from GitHub docs: `x-ratelimit-remaining`/`x-ratelimit-reset` on 403/429, `Retry-After` as seconds or HTTP date, `RATE_LIMITED` error `type`. HTTP-date form of `Retry-After` is implemented but has no test. Network errors and timeouts (`httpx.TransportError`) are not caught or retried; they propagate as httpx exceptions (spec is silent). Non-retried statuses (e.g. 500, 404) raise `UnexpectedResponseError` without retry and have no dedicated test. No CLI mapping to exit codes 1/3 yet (CLI wiring is out of scope).
+**Requests to others:** Architect (config.py line fixed): map `MissingTokenError` and `BadTokenError` -> exit 1 and `RateLimitExhaustedError` -> exit 3 in `cli.py`, and add the `--wait`-style flag that sets `wait_on_rate_limit`.
+**Decisions (spec was silent or open):**
+- Back-off for retry n (0-based): `min(min(BASE * 2**n, MAX) * (1 + JITTER * r), MAX)`, r in [0, 1). Jitter is added on top and the total re-capped, so no computed wait goes over `GITHUB_BACKOFF_MAX_SECONDS`; once the raw wait reaches the cap there is no room for jitter and the wait is exactly the cap. Trade-off: less spread at the cap, but the cap is a hard promise.
+- `GITHUB_MAX_RETRIES` = retries after the first try, so up to 1 + 5 requests. Retry-After waits and rate-limit-reset waits count as retries.
+- Low `remaining` is checked **before the next request**, not by throwing away the response that reported it, so paid-for data is kept.
+- 403/429 with `x-ratelimit-remaining: 0` and no `Retry-After` is treated as the primary rate limit (wait until `x-ratelimit-reset`, or raise), not blind back-off. `Retry-After` wins when both are present.
+- `RATE_LIMITED` reset time comes from the `x-ratelimit-reset` header, else the last known `rateLimit.resetAt`; if neither is known, the normal back-off is used.
+- A long wait the client may not take raises `RateLimitExhaustedError` before the retry-count check, so the user gets the more useful "resets at" message.
+- The client reads `rateLimit` only if the query selects it (logs a debug line otherwise); the ingest queries must select `rateLimit { remaining resetAt cost }`.
+- `paginate(..., limit=)` asks for only as many nodes as are still needed on the last page; the query must declare `$first: Int!` and `$after: String`.
+- User-Agent header is `settings.APP_NAME`.
+
+---
+
 ## GitHub client config keys and retry rules (2026-11-20, Architect)
 **Changed contract:** new config keys `GITHUB_HTTP_TIMEOUT_SECONDS` (30), `GITHUB_MAX_RETRIES` (5), `GITHUB_BACKOFF_BASE_SECONDS` (1.0), `GITHUB_BACKOFF_MAX_SECONDS` (60), `GITHUB_BACKOFF_JITTER_FRACTION` (0.25), `GITHUB_PR_FILES_CAP` (100). Contract v1.3.
 **Files:** `src/issuematch/config.py`, `docs/CONTRACT.md`, `docs/INGEST_SPEC.md` (retry rules: jitter, `Retry-After`, GraphQL `errors`, 401; four new acceptance tests), `docs/HANDOFF.md`.

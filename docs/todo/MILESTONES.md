@@ -17,7 +17,7 @@ Legend: **[ ]** not started, **[~]** in progress, **[x]** done.
 
 ## M2: Ingest (Ingest) — Stage S1
 
-- [ ] GraphQL client with pagination, rate-limit tracking and back-off (`INGEST_SPEC`).
+- [x] GraphQL client with pagination, rate-limit tracking and back-off (`INGEST_SPEC`).
 - [ ] Fetch open issues, closed issues (last `GITHUB_CLOSED_HISTORY_DAYS`), linked PRs with files changed and line counts.
 - [ ] Map responses into `Issue` / `LinkedPR` models.
 - [ ] SQLite store with incremental ingest.
